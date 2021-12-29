@@ -3,10 +3,13 @@ package io.github.devmarodrigues.rest.controller;
 import io.github.devmarodrigues.domain.entity.Cliente;
 import io.github.devmarodrigues.domain.repository.ClientesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -15,6 +18,17 @@ public class ClienteController {
 
     @Autowired
     private ClientesRepository clientesRepository;
+
+    @GetMapping
+    public ResponseEntity find(Cliente filtro) {
+        ExampleMatcher matcher = ExampleMatcher
+                                    .matching()
+                                    .withIgnoreCase()
+                                    .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        Example example = Example.of(filtro, matcher);
+        List<Cliente> clientes = clientesRepository.findAll(example);
+        return ResponseEntity.ok(clientes);
+    }
 
     @GetMapping("/{id}")
     @ResponseBody
