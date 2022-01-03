@@ -1,18 +1,31 @@
 package io.github.devmarodrigues.rest.controller;
 
+import io.github.devmarodrigues.domain.entity.ItemPedido;
 import io.github.devmarodrigues.domain.entity.Pedido;
+import io.github.devmarodrigues.rest.dto.InformacaoItemPedidoDTO;
+import io.github.devmarodrigues.rest.dto.InformacoesPedidoDTO;
 import io.github.devmarodrigues.rest.dto.PedidoDTO;
 import io.github.devmarodrigues.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/pedidos")
 public class PedidosController {
 
-    @Autowired
     private PedidoService pedidoService;
+
+    public PedidosController(PedidoService pedidoService) {
+        this.pedidoService = pedidoService;
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -21,6 +34,37 @@ public class PedidosController {
         return pedidoSalvo.getId();
     }
 
+    @GetMapping("/{id}")
+    public InformacoesPedidoDTO getById(@PathVariable Integer id) {
+        return pedidoService.obterPedidoCompleto(id)
+                .map(p -> converter(p))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado"));
+    }
+
+    private InformacoesPedidoDTO converter(Pedido pedido) {
+        return InformacoesPedidoDTO.builder()
+                    .codigo(pedido.getId())
+                    .dataPedido(pedido.getDataPedido().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+                    .cpf(pedido.getCliente().getCpf())
+                    .nomeCliente(pedido.getCliente().getNome())
+                    .total(pedido.getTotal())
+                    .items(converter(pedido.getItens()))
+                    .build();
+    }
+
+    private List<InformacaoItemPedidoDTO> converter(List<ItemPedido> itens) {
+        if(CollectionUtils.isEmpty(itens)) {
+            return Collections.emptyList();
+        }
+        return itens.stream()
+                .map(item ->
+                        InformacaoItemPedidoDTO.builder()
+                                .descricaoProduto(item.getProduto().getDescricao())
+                                .precoUnitario(item.getProduto().getPreco())
+                                .quantidade(item.getQuantidade())
+                                .build()
+                ).collect(Collectors.toList());
+    }
 
 //    @GetMapping
 //    public List<Pedido> find(Pedido filtro) {
