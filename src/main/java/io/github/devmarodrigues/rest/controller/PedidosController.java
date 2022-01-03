@@ -2,11 +2,12 @@ package io.github.devmarodrigues.rest.controller;
 
 import io.github.devmarodrigues.domain.entity.ItemPedido;
 import io.github.devmarodrigues.domain.entity.Pedido;
+import io.github.devmarodrigues.domain.enums.StatusPedido;
+import io.github.devmarodrigues.rest.dto.AtualizacaoStatusPedidoDTO;
 import io.github.devmarodrigues.rest.dto.InformacaoItemPedidoDTO;
 import io.github.devmarodrigues.rest.dto.InformacoesPedidoDTO;
 import io.github.devmarodrigues.rest.dto.PedidoDTO;
 import io.github.devmarodrigues.service.PedidoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,13 @@ public class PedidosController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado"));
     }
 
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateStatus(@RequestBody AtualizacaoStatusPedidoDTO dto, @PathVariable Integer id) {
+        String novoStatus = dto.getNovoStatus();
+        pedidoService.atualizaStatus(id, StatusPedido.valueOf(novoStatus));
+    }
+
     private InformacoesPedidoDTO converter(Pedido pedido) {
         return InformacoesPedidoDTO.builder()
                     .codigo(pedido.getId())
@@ -48,6 +56,7 @@ public class PedidosController {
                     .cpf(pedido.getCliente().getCpf())
                     .nomeCliente(pedido.getCliente().getNome())
                     .total(pedido.getTotal())
+                    .status(pedido.getStatus().name())
                     .items(converter(pedido.getItens()))
                     .build();
     }
