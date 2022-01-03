@@ -1,8 +1,5 @@
 package io.github.devmarodrigues.domain.entity;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,6 +26,15 @@ public class Pedido {
 
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itens;
+
+    public Pedido() {
+    }
+
+    public Pedido(Cliente cliente, LocalDate dataPedido, BigDecimal total) {
+        this.cliente = cliente;
+        this.dataPedido = dataPedido;
+        this.total = total;
+    }
 
     public List<ItemPedido> getItens() {
         return itens;
