@@ -1,5 +1,6 @@
 package io.github.devmarodrigues.rest.dto;
 
+import io.github.devmarodrigues.validation.NotEmptyList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class PedidoDTO {
     @NotNull(message = "O total do pedido é obrigatório.")
     private BigDecimal total;
 
+    @NotEmptyList(message = "O pedido não pode ser realizado sem ítens.")
     private List<ItemPedidoDTO> items;
 
 }

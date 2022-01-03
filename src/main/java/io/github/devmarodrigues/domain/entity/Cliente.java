@@ -27,10 +27,9 @@ public class Cliente {
     @NotEmpty(message = "O campo nome é obrigatório.")
     private String nome;
 
-    @Column(name = "cpf", length = 11)
+    @Column(name = "cpf", length = 20)
     @NotEmpty(message = "O campor CPF é obrigatório.")
     @CPF(message = "Informe um CPF válido.")
-    @Max(value = 11, message = "O campo CPF deve ser menor que ou igual à 11")
     private String cpf;
 
     @JsonIgnore
