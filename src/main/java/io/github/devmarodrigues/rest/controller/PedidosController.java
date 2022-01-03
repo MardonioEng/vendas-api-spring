@@ -1,9 +1,11 @@
 package io.github.devmarodrigues.rest.controller;
 
+import io.github.devmarodrigues.domain.entity.Pedido;
+import io.github.devmarodrigues.rest.dto.PedidoDTO;
 import io.github.devmarodrigues.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/pedidos")
@@ -11,6 +13,14 @@ public class PedidosController {
 
     @Autowired
     private PedidoService pedidoService;
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Integer save(@RequestBody PedidoDTO pedidoDTO) {
+        Pedido pedidoSalvo = pedidoService.salvar(pedidoDTO);
+        return pedidoSalvo.getId();
+    }
+
 
 //    @GetMapping
 //    public List<Pedido> find(Pedido filtro) {
@@ -27,13 +37,6 @@ public class PedidosController {
 //        return pedidosRepository
 //                .findById(id)
 //                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-//    }
-//
-//    @PostMapping
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public Pedido save(@RequestBody Pedido pedido) {
-//        pedido.setDataPedido(LocalDate.now());
-//        return pedidosRepository.save(pedido);
 //    }
 //
 //    @PutMapping("/{id}")
