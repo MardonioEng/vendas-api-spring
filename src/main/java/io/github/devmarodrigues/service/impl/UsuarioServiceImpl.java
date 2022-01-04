@@ -2,6 +2,7 @@ package io.github.devmarodrigues.service.impl;
 
 import io.github.devmarodrigues.domain.entity.Usuario;
 import io.github.devmarodrigues.domain.repository.UsuariosRepository;
+import io.github.devmarodrigues.exception.SenhaInvalidaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.User;
@@ -17,12 +18,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class UsuarioServiceImpl implements UserDetailsService {
 
     @Bean
-    public PasswordEncoder enconder() {
+    public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Autowired
     public UsuariosRepository usuariosRepository;
+
+    public UserDetails autenticar( Usuario usuario ){
+        UserDetails user = loadUserByUsername(usuario.getLogin());
+        boolean senhasBatem = encoder().matches( usuario.getSenha(), user.getPassword() );
+
+        if(senhasBatem){
+            return user;
+        }
+
+        throw new SenhaInvalidaException();
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
