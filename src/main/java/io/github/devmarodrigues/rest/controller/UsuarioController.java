@@ -27,7 +27,7 @@ public class UsuarioController {
     @ResponseStatus(HttpStatus.CREATED)
     public Usuario salvar(@RequestBody @Valid Usuario usuario) {
         String senhaCriptografada = enconderPassword().encode(usuario.getSenha());
-        usuario.setSenha(senhaCriptografada); 
+        usuario.setSenha(senhaCriptografada);
         return usuarioService.salvar(usuario);
     }
 
