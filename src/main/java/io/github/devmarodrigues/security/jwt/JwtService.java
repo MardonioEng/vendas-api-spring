@@ -1,4 +1,4 @@
-package io.github.devmarodrigues;
+package io.github.devmarodrigues.security.jwt;
 
 import io.github.devmarodrigues.domain.entity.Usuario;
 import io.jsonwebtoken.Claims;
