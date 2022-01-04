@@ -2,6 +2,10 @@ package io.github.devmarodrigues.rest.controller;
 
 import io.github.devmarodrigues.domain.entity.Cliente;
 import io.github.devmarodrigues.domain.repository.ClientesRepository;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -14,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/clientes")
+@Api("API Clientes")
 public class ClienteController {
 
     @Autowired
@@ -30,6 +35,11 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation("Obter detalhes de um cliente")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Cliente encontrado"),
+            @ApiResponse(code = 404, message = "Cliente não encontrado")
+    })
     public Cliente getClienteById(@PathVariable Integer id) {
         return clientesRepository
                 .findById(id)
